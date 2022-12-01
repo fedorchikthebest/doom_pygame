@@ -18,7 +18,7 @@ MAP = [['#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
 
 def rng(p_x, p_y, p_a):
     i = 0
-    while i < 500:
+    while i < 720:
         y = p_y + i * math.sin(p_a / 360 * 2 * math.pi)
         x = p_x + i * math.cos(p_a / 360 * 2 * math.pi)
         if MAP[int(y) // TILE_SIZE_Y][int(x) // TILE_SIZE_X] == '#':
@@ -69,14 +69,20 @@ if __name__ == '__main__':
                 running = False
         keys = pygame.key.get_pressed()
         if keys[pygame.key.key_code("w")]:
-            p_x, p_y = move_forward(p_x, p_y, p_a + 45, 10)
+            new_x, new_y = move_forward(p_x, p_y, p_a + 45, 10)
+            if MAP[int(new_y) // TILE_SIZE_Y][int(new_x) // TILE_SIZE_X] != '#':
+                p_x, p_y = new_x, new_y
+                print()
         if keys[pygame.key.key_code("s")]:
-            p_x, p_y = move_forward(p_x, p_y, p_a + 45, -10)
+            new_x, new_y = move_forward(p_x, p_y, p_a + 45, -10)
+            if MAP[int(new_y) // TILE_SIZE_Y][int(new_x) // TILE_SIZE_X] != '#':
+                p_x, p_y = new_x, new_y
         if keys[pygame.key.key_code("d")]:
             p_a += 5
         if keys[pygame.key.key_code("a")]:
             p_a -= 5
         screen.fill((100, 0, 0))
+        screen.fill((0, 100, 0), pygame.Rect((0, 360, 1280, 360)))
         for i in range(0, 80, 1):
             w_x, w_y = rng(p_x, p_y, p_a + i)
             daln = math.sqrt(abs(w_x - p_x) ** 2 + abs(w_y - p_y) ** 2) # * math.cos((p_a + i) / 360 * 2 * math.pi)
@@ -87,10 +93,9 @@ if __name__ == '__main__':
             # screen.fill(c,
             #             pygame.Rect(i * 16, 720 / daln,
             #                         i * 16 + 16, 720 - 720 / daln))
-            if not daln >= 498: # * math.cos((p_a + i) / 360 * 2 * math.pi):
-                x = i * 16
-                y = 720 * daln / 500
-                pygame.draw.rect(screen, c, ((x, y), (16, (720 - 720 * daln / 500))))
+            x = i * 16
+            y = (daln - math.sin(i - p_a)) / 2
+            pygame.draw.rect(screen, c, ((x, y), (16, 720 - (daln - math.sin(i - p_a)))))
         map_screen = pygame.surface.Surface((width, height))
         draw_map(map_screen, p_x, p_y, p_a)
         screen.blit(pygame.transform.scale(map_screen, (300, 300)), (0, 0))
