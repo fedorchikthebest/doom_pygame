@@ -2,6 +2,7 @@ import pygame
 import sys
 import math
 import time
+from objects import *
 
 SINS = {}
 COSS = {}
@@ -56,14 +57,13 @@ a = 0
 
 if __name__ == '__main__':
     pygame.init()
-    size = width, height = 800, 800
+    size = width, height = 1280, 720
     screen = pygame.display.set_mode(size)
-    TILE_SIZE_X = width // len(MAP[0])
-    TILE_SIZE_Y = height // len(MAP)
+    TILE_SIZE_X = 80
+    TILE_SIZE_Y = 80
+    map_r = Map(MAP, TILE_SIZE_X, TILE_SIZE_Y)
+    player = Player(400, 400, 0)
     while pygame.event.wait().type != pygame.QUIT:
-        screen.fill((0, 0, 0))
-        old_time = time.time()
-        draw_map()
-        for i in range(-45, 45):
-            pygame.draw.line(screen, (0, 255, 0), (400, 400), rng(400, 400, 7))
+        player.render_world(screen, map_r)
+        player.move(map_r)
         pygame.display.flip()
